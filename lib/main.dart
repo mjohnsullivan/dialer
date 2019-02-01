@@ -7,7 +7,10 @@ import 'package:flutter/services.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
-final digitTextStyle = TextStyle(fontSize: 30);
+import 'package:audioplayers/audio_cache.dart';
+
+final digitTextStyle = TextStyle(fontSize: 40);
+final flatDigitColor = Color(0xff2969ff);
 
 void main() => runApp(MyApp());
 
@@ -73,7 +76,7 @@ class NumberPad extends StatelessWidget {
           ),
           TableRow(
             children: ['*', '0', '#']
-                .map<Widget>((char) => DigitButton(char: char))
+                .map<Widget>((char) => FlatDigitButton(char: char))
                 .toList(),
           ),
         ],
@@ -98,6 +101,26 @@ class DigitButton extends StatelessWidget {
               fillColor: Colors.white,
               padding: const EdgeInsets.all(10),
               child: Text(char, style: digitTextStyle),
+              onPressed: () => model.addDigit(char),
+            ),
+      ),
+    );
+  }
+}
+
+class FlatDigitButton extends StatelessWidget {
+  FlatDigitButton({this.char});
+  final String char;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ScopedModelDescendant<PhoneNumberModel>(
+        rebuildOnChange: false,
+        builder: (context, _, model) => FlatButton(
+              child: Text(char,
+                  style: digitTextStyle.copyWith(color: flatDigitColor)),
               onPressed: () => model.addDigit(char),
             ),
       ),
@@ -210,4 +233,9 @@ String _formatPhoneNumber(String number) {
     default:
       return ('(${number.substring(0, 3)}) ${number.substring(3, 6)}-${number.substring(6)}');
   }
+}
+
+void playSound(String asset) {
+  final player = AudioCache();
+  // player.play('beep.mp3');
 }
