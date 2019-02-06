@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/widgets.dart';
-import 'package:dialer/dialer.dart';
+import 'package:audioplayers/audio_cache.dart';
 
-void main() => runApp(DialerApp());
+void playSound(String asset) {
+  final player = AudioCache();
+  // player.play('beep.mp3');
+}

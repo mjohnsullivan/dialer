@@ -22,7 +22,9 @@ import org.jetbrains.anko.yesButton
 
 class MainActivity: FlutterActivity() {
   private val channel = "dev.flutter.dialer/dialer"
+  private val channelPermissions = "dev.flutter.permissions/permissions"
   private val permissionsRequestCode = 11011
+  // private var MethodChannel.Result requestPermissionsResult = null
   private var number: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +32,6 @@ class MainActivity: FlutterActivity() {
     GeneratedPluginRegistrant.registerWith(this)
 
     MethodChannel(flutterView, channel).setMethodCallHandler { call, result ->
-      print("Phone dialer called in Kotlin")
       when (call.method) {
         "dial" -> {
           val number = call.argument<String>("number")
@@ -41,6 +42,25 @@ class MainActivity: FlutterActivity() {
         else -> result.notImplemented()
       }
     }
+
+    MethodChannel(flutterView, channelPermissions).setMethodCallHandler { call, result ->
+      when (call.method) {
+        "hasPermission" -> {
+          val permission = call.argument<String>("permission")
+          permission?.let {
+            result.success(isPermissionGranted(it))
+          }
+        }
+        "requestPermission" -> {
+          val permission = call.argument<String>("permission")
+          permission?.let {
+            requestPermission(permission, permissionsRequestCode)
+          }
+        }
+        else -> result.notImplemented()
+      }
+    }
+
   }
 
   /*
@@ -112,10 +132,23 @@ class MainActivity: FlutterActivity() {
     }
   }
 
+  /*
+   * Is a given permission granted
+   */
   private fun isPermissionGranted(permission:String):Boolean =
           ContextCompat.checkSelfPermission(
                   this,
                   permission
           ) == PackageManager.PERMISSION_GRANTED
+
+  /*
+   * Request a permission
+   */
+  private fun requestPermission(permission: String,
+                                requestCode: Int) = ActivityCompat.requestPermissions(
+          this,
+          arrayOf(permission),
+          requestCode
+  )
 
 }
