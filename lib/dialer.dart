@@ -12,7 +12,6 @@ final digitTextStyle = TextStyle(fontSize: 40);
 final flatDigitColor = Color(0xff2969ff);
 
 class DialerApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
