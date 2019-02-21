@@ -2,29 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:dialer/phone_number.dart';
 import 'package:flutter/material.dart';
-import 'package:provide/provide.dart';
 
-import 'package:dialer/permissions.dart';
-
-final digitTextStyle = TextStyle(fontSize: 40);
-final darkBlue = Color(0xff2969ff);
+import 'package:dialer/widgets.dart';
+import 'package:dialer/theme.dart';
 
 class DialerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        iconTheme: IconThemeData(
-          color: darkBlue,
-        ),
-        // primarySwatch: darkBlue,
-        primaryColor: darkBlue,
-        textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: darkBlue,
-            ),
-      ),
+      theme: phoneTheme(context),
       title: 'Flutter Dialer',
       home: Scaffold(
           body: SafeArea(
@@ -34,23 +21,10 @@ class DialerApp extends StatelessWidget {
   }
 }
 
-/// Dialer is a stateful widget. It holds the phone number
-/// and preserves the model state between hot reloads
-class Dialer extends StatefulWidget {
-  @override
-  createState() => _DialerState();
-}
-
-class _DialerState extends State<Dialer> {
-  final providers = Providers()
-    ..provide(Provider.value(
-      PhoneNumber(),
-    ));
-
+class Dialer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProviderNode(
-      providers: providers,
+    return DialerData(
       child: Column(children: <Widget>[
         NumberReadout(),
         NumberPad(),
@@ -96,47 +70,6 @@ class NumberPad extends StatelessWidget {
   }
 }
 
-class DigitButton extends StatelessWidget {
-  DigitButton({this.char});
-  final String char;
-
-  @override
-  Widget build(BuildContext context) {
-    final phoneNumber = Provide.value<PhoneNumber>(context);
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: RawMaterialButton(
-        shape: CircleBorder(),
-        elevation: 6,
-        fillColor: Colors.white,
-        padding: const EdgeInsets.all(10),
-        child: Text(char, style: digitTextStyle),
-        onPressed: () => phoneNumber.addDigit(char),
-      ),
-    );
-  }
-}
-
-class FlatDigitButton extends StatelessWidget {
-  FlatDigitButton({this.char});
-  final String char;
-
-  @override
-  Widget build(BuildContext context) {
-    final phoneNumber = Provide.value<PhoneNumber>(context);
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: FlatButton(
-        child: Text(
-          char,
-          style: digitTextStyle.copyWith(color: darkBlue),
-        ),
-        onPressed: () => phoneNumber.addDigit(char),
-      ),
-    );
-  }
-}
-
 /// Displays the entered phone number
 class NumberReadout extends StatelessWidget {
   @override
@@ -150,37 +83,10 @@ class NumberReadout extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          Expanded(
-            child: Provide<PhoneNumber>(
-              builder: (context, _, phoneNumber) {
-                return Text(
-                  phoneNumber.formattedNumber,
-                  textAlign: TextAlign.center,
-                  style: digitTextStyle,
-                );
-              },
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.backspace),
-            onPressed: () => Provide.value<PhoneNumber>(context).removeDigit(),
-          ),
+          PhoneNumberDisplay(),
+          DeleteButton(),
         ],
       ),
-    );
-  }
-}
-
-/// Dials the entered phone number
-class DialButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Provide<PhoneNumber>(
-      builder: (context, _, number) => FloatingActionButton(
-            child: Icon(Icons.phone),
-            onPressed: () =>
-                number.hasNumber ? dialNumber(number.number, context) : null,
-          ),
     );
   }
 }
