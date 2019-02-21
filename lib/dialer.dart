@@ -2,19 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:dialer/phone_number.dart';
 import 'package:flutter/material.dart';
-
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provide/provide.dart';
 
 import 'package:dialer/permissions.dart';
 
 final digitTextStyle = TextStyle(fontSize: 40);
-final flatDigitColor = Color(0xff2969ff);
+final darkBlue = Color(0xff2969ff);
 
 class DialerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        iconTheme: IconThemeData(
+          color: darkBlue,
+        ),
+        // primarySwatch: darkBlue,
+        primaryColor: darkBlue,
+        textTheme: Theme.of(context).textTheme.apply(
+              bodyColor: darkBlue,
+            ),
+      ),
       title: 'Flutter Dialer',
       home: Scaffold(
           body: SafeArea(
@@ -24,25 +34,30 @@ class DialerApp extends StatelessWidget {
   }
 }
 
-/// Dialer is a stateful widget. It holds the phone number model
-/// which will preserve the model state between hot reloads
+/// Dialer is a stateful widget. It holds the phone number
+/// and preserves the model state between hot reloads
 class Dialer extends StatefulWidget {
   @override
   createState() => _DialerState();
 }
 
 class _DialerState extends State<Dialer> {
-  final model = PhoneNumberModel();
+  final providers = Providers()
+    ..provide(Provider.value(
+      PhoneNumber(),
+    ));
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<PhoneNumberModel>(
-      model: model,
+    return ProviderNode(
+      providers: providers,
       child: Column(children: <Widget>[
         NumberReadout(),
         NumberPad(),
         SizedBox(height: 50),
         DialButton(),
+        SizedBox(height: 50),
+        FlutterLogo(size: 50),
       ]),
     );
   }
@@ -87,18 +102,16 @@ class DigitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final phoneNumber = Provide.value<PhoneNumber>(context);
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ScopedModelDescendant<PhoneNumberModel>(
-        rebuildOnChange: false,
-        builder: (context, _, model) => RawMaterialButton(
-              shape: CircleBorder(),
-              elevation: 6,
-              fillColor: Colors.white,
-              padding: const EdgeInsets.all(10),
-              child: Text(char, style: digitTextStyle),
-              onPressed: () => model.addDigit(char),
-            ),
+      child: RawMaterialButton(
+        shape: CircleBorder(),
+        elevation: 6,
+        fillColor: Colors.white,
+        padding: const EdgeInsets.all(10),
+        child: Text(char, style: digitTextStyle),
+        onPressed: () => phoneNumber.addDigit(char),
       ),
     );
   }
@@ -110,15 +123,15 @@ class FlatDigitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final phoneNumber = Provide.value<PhoneNumber>(context);
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ScopedModelDescendant<PhoneNumberModel>(
-        rebuildOnChange: false,
-        builder: (context, _, model) => FlatButton(
-              child: Text(char,
-                  style: digitTextStyle.copyWith(color: flatDigitColor)),
-              onPressed: () => model.addDigit(char),
-            ),
+      child: FlatButton(
+        child: Text(
+          char,
+          style: digitTextStyle.copyWith(color: darkBlue),
+        ),
+        onPressed: () => phoneNumber.addDigit(char),
       ),
     );
   }
@@ -132,30 +145,25 @@ class NumberReadout extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        border: Border.all(),
+        border: Border.all(color: darkBlue),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: <Widget>[
           Expanded(
-            child: ScopedModelDescendant<PhoneNumberModel>(
-              builder: (context, _, model) {
+            child: Provide<PhoneNumber>(
+              builder: (context, _, phoneNumber) {
                 return Text(
-                  model.number,
+                  phoneNumber.formattedNumber,
                   textAlign: TextAlign.center,
                   style: digitTextStyle,
                 );
               },
             ),
           ),
-          ScopedModelDescendant<PhoneNumberModel>(
-            rebuildOnChange: false,
-            builder: (context, _, model) {
-              return IconButton(
-                icon: Icon(Icons.backspace),
-                onPressed: () => model.removeDigit(),
-              );
-            },
+          IconButton(
+            icon: Icon(Icons.backspace),
+            onPressed: () => Provide.value<PhoneNumber>(context).removeDigit(),
           ),
         ],
       ),
@@ -167,50 +175,12 @@ class NumberReadout extends StatelessWidget {
 class DialButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<PhoneNumberModel>(
-      builder: (context, _, model) => FloatingActionButton(
+    return Provide<PhoneNumber>(
+      builder: (context, _, number) => FloatingActionButton(
             child: Icon(Icons.phone),
-            onPressed: () => model._number.isNotEmpty
-                ? dialNumber(model._number, context)
-                : null,
+            onPressed: () =>
+                number.hasNumber ? dialNumber(number.number, context) : null,
           ),
     );
-  }
-}
-
-/// Model for the entered phone number
-class PhoneNumberModel extends Model {
-  /// Represented as a string to handle chars like #, *
-  var _number = '';
-
-  String get number => _formatPhoneNumber(_number);
-
-  void addDigit(String digit) {
-    _number += digit;
-    notifyListeners();
-  }
-
-  void removeDigit() {
-    if (_number.length > 0) {
-      _number = _number.substring(0, _number.length - 1);
-      notifyListeners();
-    }
-  }
-}
-
-String _formatPhoneNumber(String number) {
-  switch (number.length) {
-    case (0):
-    case (1):
-    case (2):
-    case (3):
-      return number;
-    case (4):
-    case (5):
-    case (6):
-    case (7):
-      return ('${number.substring(0, 3)}-${number.substring(3)}');
-    default:
-      return ('(${number.substring(0, 3)}) ${number.substring(3, 6)}-${number.substring(6)}');
   }
 }
