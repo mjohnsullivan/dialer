@@ -34,6 +34,39 @@ class _DialerDataState extends State<DialerData> {
   }
 }
 
+class NumberPad extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20),
+      child: Table(
+        children: <TableRow>[
+          TableRow(
+            children: ['1', '2', '3']
+                .map<Widget>((char) => DigitButton(char: char))
+                .toList(),
+          ),
+          TableRow(
+            children: ['4', '5', '6']
+                .map<Widget>((char) => DigitButton(char: char))
+                .toList(),
+          ),
+          TableRow(
+            children: ['7', '8', '9']
+                .map<Widget>((char) => DigitButton(char: char))
+                .toList(),
+          ),
+          TableRow(
+            children: ['*', '0', '#']
+                .map<Widget>((char) => DigitButton(char: char))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class DigitButton extends StatelessWidget {
   DigitButton({this.char});
   final String char;
@@ -48,7 +81,7 @@ class DigitButton extends StatelessWidget {
         elevation: 6,
         fillColor: Colors.white,
         padding: const EdgeInsets.all(10),
-        child: Text(char, style: digitTextStyle),
+        child: Text(char),
         onPressed: () => phoneNumber.addDigit(char),
       ),
     );
@@ -65,10 +98,8 @@ class FlatDigitButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: FlatButton(
-        child: Text(
-          char,
-          style: digitTextStyle.copyWith(color: darkBlue),
-        ),
+        textColor: darkBlue,
+        child: Text(char),
         onPressed: () => phoneNumber.addDigit(char),
       ),
     );
@@ -110,9 +141,29 @@ class PhoneNumberDisplay extends StatelessWidget {
           return Text(
             phoneNumber.formattedNumber,
             textAlign: TextAlign.center,
-            style: digitTextStyle,
           );
         },
+      ),
+    );
+  }
+}
+
+/// Displays the entered phone number
+class NumberReadout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        border: Border.all(color: darkBlue),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: <Widget>[
+          PhoneNumberDisplay(),
+          DeleteButton(),
+        ],
       ),
     );
   }

@@ -12,9 +12,10 @@ ThemeData phoneTheme(BuildContext context) => ThemeData(
       iconTheme: IconThemeData(
         color: darkBlue,
       ),
-      // primarySwatch: darkBlue,
+      primarySwatch: Colors.blue,
       primaryColor: darkBlue,
       textTheme: Theme.of(context).textTheme.apply(
             bodyColor: darkBlue,
+            fontSizeFactor: 2,
           ),
     );

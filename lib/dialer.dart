@@ -13,10 +13,7 @@ class DialerApp extends StatelessWidget {
     return MaterialApp(
       theme: phoneTheme(context),
       title: 'Flutter Dialer',
-      home: Scaffold(
-          body: SafeArea(
-        child: Dialer(),
-      )),
+      home: Scaffold(body: SafeArea(child: Dialer())),
     );
   }
 }
@@ -31,62 +28,7 @@ class Dialer extends StatelessWidget {
         SizedBox(height: 50),
         DialButton(),
         SizedBox(height: 50),
-        FlutterLogo(size: 50),
       ]),
-    );
-  }
-}
-
-class NumberPad extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20),
-      child: Table(
-        children: <TableRow>[
-          TableRow(
-            children: ['1', '2', '3']
-                .map<Widget>((char) => FlatDigitButton(char: char))
-                .toList(),
-          ),
-          TableRow(
-            children: ['4', '5', '6']
-                .map<Widget>((char) => FlatDigitButton(char: char))
-                .toList(),
-          ),
-          TableRow(
-            children: ['7', '8', '9']
-                .map<Widget>((char) => FlatDigitButton(char: char))
-                .toList(),
-          ),
-          TableRow(
-            children: ['*', '0', '#']
-                .map<Widget>((char) => FlatDigitButton(char: char))
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Displays the entered phone number
-class NumberReadout extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(color: darkBlue),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: <Widget>[
-          PhoneNumberDisplay(),
-          DeleteButton(),
-        ],
-      ),
     );
   }
 }
