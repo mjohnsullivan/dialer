@@ -34,6 +34,48 @@ class _DialerDataState extends State<DialerData> {
   }
 }
 
+/// Dialer UI
+class Dialer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DialerData(
+      child: Column(children: <Widget>[
+        NumberReadout(),
+        NumberPad(),
+        SizedBox(height: 50),
+        DialButton(),
+        SizedBox(height: 50),
+      ]),
+    );
+  }
+}
+
+/// Decorated dialer UI
+class DecoratedDialer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              colors: <Color>[Colors.cyan, Colors.white],
+            )),
+            child: Opacity(
+              opacity: 0.2,
+              child: FlutterLogo(),
+            ),
+          ),
+        ),
+        Dialer(),
+      ],
+    );
+  }
+}
+
+/// Phone number pad
 class NumberPad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -43,22 +85,22 @@ class NumberPad extends StatelessWidget {
         children: <TableRow>[
           TableRow(
             children: ['1', '2', '3']
-                .map<Widget>((char) => DigitButton(char: char))
+                .map<Widget>((char) => DigitButton(char))
                 .toList(),
           ),
           TableRow(
             children: ['4', '5', '6']
-                .map<Widget>((char) => DigitButton(char: char))
+                .map<Widget>((char) => DigitButton(char))
                 .toList(),
           ),
           TableRow(
             children: ['7', '8', '9']
-                .map<Widget>((char) => DigitButton(char: char))
+                .map<Widget>((char) => DigitButton(char))
                 .toList(),
           ),
           TableRow(
             children: ['*', '0', '#']
-                .map<Widget>((char) => DigitButton(char: char))
+                .map<Widget>((char) => DigitButton(char))
                 .toList(),
           ),
         ],
@@ -67,8 +109,9 @@ class NumberPad extends StatelessWidget {
   }
 }
 
+/// Dialer button
 class DigitButton extends StatelessWidget {
-  DigitButton({this.char});
+  DigitButton(this.char);
   final String char;
 
   @override
@@ -88,15 +131,16 @@ class DigitButton extends StatelessWidget {
   }
 }
 
+/// Another dialer button
 class FlatDigitButton extends StatelessWidget {
-  FlatDigitButton({this.char});
+  FlatDigitButton(this.char);
   final String char;
 
   @override
   Widget build(BuildContext context) {
     final phoneNumber = Provide.value<PhoneNumber>(context);
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10),
       child: FlatButton(
         textColor: darkBlue,
         child: Text(char),
