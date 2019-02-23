@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 
-// final digitTextStyle = TextStyle(fontSize: 40);
 final darkBlue = Color(0xff2969ff);
 
 /// Returns the theme for the app
