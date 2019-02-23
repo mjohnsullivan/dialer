@@ -24,6 +24,6 @@ void main() => runApp(
 class DialerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Dialer());
+    return Center(child: Text('Hello MWC!'));
   }
 }
