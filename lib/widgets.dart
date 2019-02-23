@@ -38,14 +38,15 @@ class _DialerDataState extends State<DialerData> {
 class Dialer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DialerData(
-      child: Column(children: <Widget>[
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
         NumberReadout(),
         NumberPad(),
         SizedBox(height: 50),
         DialButton(),
         SizedBox(height: 50),
-      ]),
+      ],
     );
   }
 }

@@ -33,13 +33,14 @@ String _formatPhoneNumber(String number) {
     case (1):
     case (2):
     case (3):
-      return number;
     case (4):
+      return number;
     case (5):
     case (6):
     case (7):
-      return ('${number.substring(0, 3)}-${number.substring(3)}');
+    case (8):
+      return ('${number[0]} ${number.substring(1, 4)} ${number.substring(4)}');
     default:
-      return ('(${number.substring(0, 3)}) ${number.substring(3, 6)}-${number.substring(6)}');
+      return ('${number[0]} (${number.substring(1, 4)}) ${number.substring(4, 7)} ${number.substring(7)}');
   }
 }
