@@ -12,10 +12,9 @@ void main() => runApp(
               theme: phoneTheme(context),
               title: 'Flutter Dialer',
               home: Scaffold(
-                body: SafeArea(
-                    child: DialerData(
+                body: DialerData(
                   child: DialerApp(),
-                )),
+                ),
               ),
             ),
       ),
