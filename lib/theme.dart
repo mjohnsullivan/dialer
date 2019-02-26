@@ -14,7 +14,7 @@ ThemeData phoneTheme(BuildContext context) => ThemeData(
       primarySwatch: Colors.blue,
       primaryColor: darkBlue,
       textTheme: Theme.of(context).textTheme.apply(
-            bodyColor: darkBlue,
-            fontSizeFactor: 2,
+            bodyColor: Colors.green,
+            fontSizeFactor: 3,
           ),
     );
